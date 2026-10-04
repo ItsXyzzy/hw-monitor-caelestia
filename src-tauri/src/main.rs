@@ -130,6 +130,10 @@ fn main() {
         panic!("failed to initialize config: {err}");
     }
     tauri::Builder::default()
+        // must be registered first; a second launch focuses the running window instead
+        .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
+            show_main_window(app);
+        }))
         .manage(AppLifecycleState::default())
         .manage(cpu_utils::PerfCpuState(Mutex::new(None)))
         .manage(cpu_utils::TotalCpuState(Mutex::new(None)))
